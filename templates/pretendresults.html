@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block body %}
+    <link rel="stylesheet" href="{{ url_for('static', filename="pretend.css") }}"/>
+    <h1>Ebuild Planned Compilations</h1>
+    <p>The following components will be installed on next @world execution</p>
+    <table>
+    <tr>
+        <th>Package Name</th>
+        <th>Previous Version</th>
+        <th>Build Flags</th>
+        <th>Use flags</th>
+    </tr>
+    {% for ebuild in ebuilds %}
+        {% if "U" in ebuild["buildflags"] %}
+            <tr class="update-ebuild">
+        {% elif "N" in ebuild["buildflags"] %}
+            <tr class="new-ebuild">
+        {% elif "R" in ebuild["buildflags"] %}
+            <tr class="rebuild-ebuild">
+        {% else %}
+            <tr>
+        {% endif %}
+                <td>{{ ebuild["packagename"] }}</td>
+                {% if "previousversion" in ebuild %}
+                <td>{{ ebuild["previousversion"] }}</td>
+                {% else %}
+                <td/>
+                {% endif %}
+                <td>
+                    {% for flag in ebuild["buildflags"] %}
+                        {{ flag }}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for key, value in ebuild["useflags"].items() %}
+                        <strong>{{ key }}:</strong> {{ value }}
+                    {% endfor %}
+                </td>
+            </tr>
+    {% endfor %}
+    </table>
+{% endblock %}
